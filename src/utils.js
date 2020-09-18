@@ -56,19 +56,47 @@ const gregorianConfigs = {
   timeClose: 'Close',
 };
 
+const russianConfigs = {
+  dayNames: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
+  dayNamesShort: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+  monthNames: [
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+    'Июль',
+    'Август',
+    'Сентябрь',
+    'Октябрь',
+    'Ноябрь',
+    'Декабрь',
+  ],
+  selectedFormat: 'DD/MM/YYYY',
+  dateFormat: 'DD/MM/YYYY',
+  monthYearFormat: 'MM YYYY',
+  timeFormat: 'HH:mm',
+  hour: 'Часы',
+  minute: 'Минуты',
+  timeSelect: 'Выбрать',
+  timeClose: 'Закрыть',
+};
+
 class utils {
-  constructor({minimumDate, maximumDate, isGregorian, mode, reverse, configs}) {
+  constructor({minimumDate, maximumDate, isGregorian, locale, mode, reverse, configs}) {
     this.data = {
       minimumDate,
       maximumDate,
       isGregorian,
       reverse: reverse === 'unset' ? !isGregorian : reverse,
     };
-    this.config = isGregorian ? gregorianConfigs : jalaaliConfigs;
+    this.config = !isGregorian ? jalaaliConfigs : (locale !== 'ru-RU') ? gregorianConfigs : russianConfigs;
     this.config = {...this.config, ...configs};
     if (mode === 'time' || mode === 'datepicker') {
       this.config.selectedFormat = this.config.dateFormat + ' ' + this.config.timeFormat;
     }
+    this.firstDay = locale === 'ru-RU' ? 0 : 1;
   }
 
   get flexDirection() {
@@ -166,7 +194,7 @@ class utils {
     const currentMonthDays = isGregorian
       ? date.daysInMonth()
       : moment.jDaysInMonth(date.jYear(), date.jMonth());
-    const firstDay = isGregorian ? date.date(1) : date.jDate(1);
+    const firstDay = isGregorian ? date.date(this.firstDay) : date.jDate(1)
     const dayOfMonth = (firstDay.day() + Number(!isGregorian)) % 7;
     return [
       ...new Array(dayOfMonth),
