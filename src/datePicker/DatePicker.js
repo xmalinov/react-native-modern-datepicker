@@ -142,7 +142,7 @@ DatePicker.defaultProps = {
   reverse: 'unset',
   options: {},
   mode: 'datepicker',
-  minuteInterval: 5,
+  minuteInterval: 1,
   style: {},
 };
 
